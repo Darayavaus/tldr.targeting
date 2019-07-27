@@ -1,8 +1,95 @@
-<html>
-    <title>TL;DR</title>
-    <head></head>
-
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>TL;DR Team</title>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <!-- Fintawesome -->
+        <script src="https://kit.fontawesome.com/a93354befc.js"></script>
+    </head>
     <body>
-        {{ petya['name'], petya['status'], petya['favorite_strings'], petya['attention_strings'] }}
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 shadow-sm">
+            <h5 class="my-0 mr-md-auto"><a href="#" class="text-dark text-decoration-none">TL;DR Team</a></h5>
+            <nav class="my-2 my-md-0 mr-md-3">
+                <a class="p-2 text-dark" href="#">Ссылка 1</a>
+                <a class="p-2 text-dark" href="#">Ссылка 2</a>
+            </nav>
+            <a class="btn btn-outline-primary" href="#"><i class="fas fa-door-open"></i> Выйти</a>
+        </div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 border-right py-3">
+                    <div class="text-center">
+                        <img src="../static/img/avatar.svg" class="mb-2" height="130" width="130" alt="Аватар" style="object-fit: cover;">
+                        <h3 class="font-weight-normal">{{ petya['name'] }}</h3>
+                    </div>
+                    <p>Статус: {{ petya['status'] }}</p>
+                    {{ petya['favorite_strings'] }}
+                    {{ petya['attention_strings'] }}
+
+                    <ul class="list-inline">
+                        <li class="list-inline-item">
+                            <h5><span class="badge badge-primary"><i class="fas fa-atom"></i> Физика</span></h5>
+                        </li>
+                        <li class="list-inline-item">
+                            <h5><span class="badge badge-info"><i class="fas fa-square-root-alt"></i> Математика</span></h5>
+                        </li>
+                        <li class="list-inline-item">
+                            <h5><span class="badge badge-success"><i class="fas fa-flask"></i> Химия</span></h5>
+                        </li>
+                        <li class="list-inline-item">
+                            <h5><span class="badge badge-dark"><i class="fas fa-code"></i> Информатика</span></h5>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-9 py-3">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card mb-4 shadow-sm">
+                                <div class="card-header bg-transparent p-0">
+                                    <img src="../static/img/card.jpg" class="card-img-top" height="140" alt="Квантовая теория поля" style="object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">Квантовая теория поля</h5>
+                                    <div class="card-subtitle mb-2 text-muted">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h6 class="mb-0">Книга</h6>
+                                            <h6 class="mb-0">8-9 класс</h6>
+                                        </div>
+                                    </div>
+                                    <p class="card-text mb-2">Математический аппарат КТП — гильбертово пространство состояний.</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <p class="mb-0"><a href="#" class="text-warning" data-toggle="tooltip" data-placement="top" title="Добавить в избранное"><i class="fas fa-star fa-fw"></i></a></p>
+                                        <p class="mb-0"><a href="#" class="text-danger" data-toggle="tooltip" data-placement="top" title="Мне это не интересно"><i class="fas fa-times fa-fw"></i></a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="text-muted border-top">
+            <div class="container mt-3">
+                <p class="float-right">
+                <a href="#">Вернуться в начало страницы</a>
+                </p>
+                <p>Хакатон "Цифровой прорыв"</p>
+            </div>
+        </footer>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script type="text/javascript">
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            })
+        </script>
     </body>
 </html>
