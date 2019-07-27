@@ -2,29 +2,16 @@ from flask import render_template, redirect, flash, jsonify
 from . import app
 
 import json
+import pandas as pd
 
-MAPPING = {}
-with open('db/mapping.json', 'r') as f:
-    MAPPING = json.load(f)
+MAPPING = pd.read_csv('db/kess_index.csv', sep=';')
 
-MATERIALS = []
-with open('db/materials.json', 'r') as f:
-    MATERIALS = json.load(f)
+MATERIALS = pd.read_csv('db/lesson_templates.csv', sep=';')
 
 @app.route('/')
 def index():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
-    attentions = []
-    for a in petya['attention']:
-        tmp = a.split(';')
-        attentions.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
-    petya['attention_strings'] = attentions
-    favorite = []
-    for f in petya['attention']:
-        tmp = f.split(';')
-        favorite.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
-    petya['favorite_strings'] = favorite
     return render_template('index.html', petya=petya)
 
 
@@ -33,9 +20,12 @@ def attentions():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     attentions = []
-    for a in petya['attention']:
-        tmp = a.split(';')
-        attentions.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
+    MAPPING = pd.read_csv('db/kess_index.csv', sep=';')
+    print(MAPPING.iloc[1])
+    for a in petya['attentions']:
+        attentions.append(
+            list(MAPPING[MAPPING['kesId']==a][['subjectName', 'kesName']].values[0])
+        )
     return jsonify({
         'attentions': attentions
     })
@@ -45,9 +35,10 @@ def favorites():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     favorites = []
-    for a in petya['favorite']:
-        tmp = a.split(';')
-        favorites.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
+    for f in petya['favorites']:
+        favorites.append(
+            list(MAPPING[MAPPING['kesId']==f][['subjectName', 'kesName']].values[0])
+        )
     return jsonify({
         'favorites': favorites
     })
@@ -59,14 +50,20 @@ def cards_favorite():
     })
 
 @app.route('/api/cards_attentions/')
-def cards_attention():
+def cards_attentions():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
-    attentions = []
-    for a in petya['attention']:
-        for mat in MATERIALS:
-            if a in mat['kes']:
-                attentions.append({mat['name']: {"type": mat['type']}})
+    cards_attentions = []
+    for a in petya['attentions']:
+        for i in range(len(MATERIALS)):
+            if str(a) in ''.join(MATERIALS.iloc[i]['controllable_item_ids']):
+                cards_attentions.append({
+                    'title': MATERIALS.iloc[i]['topic_name'],
+                    'type': 'Шаблон лекции',
+                    'level': 'Базовый' if MATERIALS.iloc[i]['studying_level_id']==1 else 'Углубленный',
+                    'description': MATERIALS.iloc[i]['description'],
+                    'author': MATERIALS.iloc[i]['author_name']
+                })
     return jsonify({
-        'cards_attentions': attentions
+        'cards_attentions': cards_attentions
     })

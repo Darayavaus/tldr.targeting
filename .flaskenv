@@ -1,1 +1,2 @@
 FLASK_APP=targeting.py
+FLASK_DEBUG=1
