@@ -15,11 +15,11 @@ with open('db/materials.json', 'r') as f:
 def index():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
-    attention = []
+    attentions = []
     for a in petya['attention']:
         tmp = a.split(';')
-        attention.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
-    petya['attention_strings'] = attention
+        attentions.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
+    petya['attention_strings'] = attentions
     favorite = []
     for f in petya['attention']:
         tmp = f.split(';')
@@ -28,14 +28,38 @@ def index():
     return render_template('index.html', petya=petya)
 
 
-@app.route('/api/get_favorite')
-def get_favorite():
+@app.route('/api/attentions/')
+def attentions():
+    with open('db/petya.json', 'r') as f:
+        petya = json.load(f)
+    attentions = []
+    for a in petya['attention']:
+        tmp = a.split(';')
+        attentions.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
     return jsonify({
-        'favorite': []
+        'attentions': attentions
     })
 
-@app.route('/api/get_attention')
-def get_attention():
+@app.route('/api/favorites/')
+def favorites():
+    with open('db/petya.json', 'r') as f:
+        petya = json.load(f)
+    favorites = []
+    for a in petya['favorite']:
+        tmp = a.split(';')
+        favorites.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
+    return jsonify({
+        'favorites': favorites
+    })
+
+@app.route('/api/cards_favorites/')
+def cards_favorite():
+    return jsonify({
+        'cards_favorites': []
+    })
+
+@app.route('/api/cards_attentions/')
+def cards_attention():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     attention = []
