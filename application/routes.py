@@ -13,6 +13,12 @@ def index():
         petya = json.load(f)
     attention = []
     for a in petya['attention']:
-        attention.append(MAPPING['2'][str(a.split(';')[-1])])
+        tmp = a.split(';')
+        attention.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
     petya['attention_strings'] = attention
+    favorite = []
+    for f in petya['attention']:
+        tmp = f.split(';')
+        favorite.append(MAPPING[str(len(tmp)-1)][str(tmp[-1])])
+    petya['favorite_strings'] = favorite
     return render_template('index.html', petya=petya)
