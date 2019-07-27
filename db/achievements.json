@@ -1,0 +1,20 @@
+[
+    {
+        'title': 'Исследователь',
+        'locked': 'True',
+        'description': 'Ого! Ты начал изучение уже 5-ти различных тем. Продолжай в том же духе, впереди еще много интересного!',
+        'img-path': 'static/img/achievements/issledovatel.svg'
+    },
+    {
+        'title': 'Начинающий биолог',
+        'locked': 'False',
+        'description': 'Ты изучил более 10 учебных материалов по биологии. Неужели среди нас будущий врач или биоинформатик?',
+        'img-path': 'static/img/achievements/biolog.svg'
+    },
+    {
+        'title': 'Математик',
+        'locked': 'False',
+        'description': 'Ты изучил все темы по алгебре! Похоже, любой интеграл тебе нипочем!',
+        'img-path': 'static/img/achievements/math.svg'
+    },
+]
