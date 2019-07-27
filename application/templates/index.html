@@ -113,7 +113,7 @@
                         <div class="row">
                             <card
                                 v-for="card in cards_attentions"
-                                v-bind:value="card"
+                                v-bind:card="card"
                                 v-bind:key="card.id"
                             ></card>
                         </div>
@@ -121,7 +121,7 @@
                         <div class="row">
                             <card
                                 v-for="card in cards_favorites"
-                                v-bind:value="card"
+                                v-bind:card="card"
                                 v-bind:key="card.id"
                             ></card>
                         </div>
