@@ -62,11 +62,11 @@ def cards_favorite():
 def cards_attention():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
-    attention = []
+    attentions = []
     for a in petya['attention']:
         for mat in MATERIALS:
             if a in mat['kes']:
-                attention.append({mat['name']: {"type": mat['type']}})
+                attentions.append({mat['name']: {"type": mat['type']}})
     return jsonify({
-        'attention': attention
+        'cards_attentions': attentions
     })
