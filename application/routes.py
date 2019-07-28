@@ -71,6 +71,20 @@ def cards_favorite():
     for f in petya['favorites']:
         fav_vector = np.logical_or(fav_vector, get_vector(f.split('.'))).astype(int)
         print(fav_vector)
+    recomends = kdt.query(fav_vector, 3, return_distance=False)
+    print(MATERIALS.iloc[recomends[0]])
+    for i in recomends[0]:
+        # MATERIALS.iloc[i]
+        cards_favorites.append({
+            'title': MATERIALS.iloc[i]['name'],
+            'type': 'Книга',
+            'id': str(int(MATERIALS.iloc[i]['book_id'])),
+            # 'description': MATERIALS.iloc[i]['description'],
+            'author': MATERIALS.iloc[i]['authors'],
+            'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
+            'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
+            'kes': MATERIALS.iloc[i]['kes']
+        })
     return jsonify({
         'cards_favorites': cards_favorites
     })
@@ -90,6 +104,7 @@ def cards_attentions():
                     # 'description': MATERIALS.iloc[i]['description'],
                     'author': MATERIALS.iloc[i]['authors'],
                     'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
+                    'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
                     'kes': MATERIALS.iloc[i]['kes']
                 })
     print(cards_attentions)
