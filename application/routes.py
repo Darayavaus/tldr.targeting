@@ -87,7 +87,7 @@ def cards_favorite(fav):
                 'author': MATERIALS.iloc[i]['authors'],
                 'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
                 'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-                'score': random.random * 5,
+                'score': random.random() * 5,
                 'kes': MATERIALS.iloc[i]['kes'].replace('.', 'd'),
             })
     return jsonify({
@@ -110,7 +110,7 @@ def cards_attentions():
                     'author': MATERIALS.iloc[i]['authors'],
                     'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
                     'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-                    'score': random.random * 5,
+                    'score': random.random() * 5,
                     'kes': MATERIALS.iloc[i]['kes'].replace('.', 'd'),
                 })
     print(cards_attentions)
