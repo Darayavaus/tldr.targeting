@@ -4,9 +4,14 @@ from . import app
 import json
 import pandas as pd
 
-MAPPING = pd.read_csv('db/kess_index.csv', sep=';')
+MAPPING = {}
+with open('db/mapping.json', 'r') as f:
+    MAPPING = json.load(f)
 
-MATERIALS = pd.read_csv('db/lesson_templates.csv', sep=';')
+MATERIALS = pd.read_csv('db/materials.csv', sep=',')
+# print(MATERIALS.iloc[1])
+
+HOST = 'https://uchebnik.mos.ru/cms/api'
 
 @app.route('/')
 def index():
@@ -20,12 +25,10 @@ def attentions():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     attentions = []
-    MAPPING = pd.read_csv('db/kess_index.csv', sep=';')
-    print(MAPPING.iloc[1])
     for a in petya['attentions']:
-        attentions.append(
-            list(MAPPING[MAPPING['kesId']==a][['subjectName', 'kesName']].values[0])
-        )
+        key = a.split('.')[0]
+        attentions.append(MAPPING[key])
+    attentions = list(set(attentions))
     return jsonify({
         'attentions': attentions
     })
@@ -36,9 +39,9 @@ def favorites():
         petya = json.load(f)
     favorites = []
     for f in petya['favorites']:
-        favorites.append(
-            list(MAPPING[MAPPING['kesId']==f][['subjectName', 'kesName']].values[0])
-        )
+        key = f.split('.')[0]
+        favorites.append(MAPPING[key])
+    favorites = list(set(favorites))
     return jsonify({
         'favorites': favorites
     })
@@ -56,14 +59,16 @@ def cards_attentions():
     cards_attentions = []
     for a in petya['attentions']:
         for i in range(len(MATERIALS)):
-            if str(a) in ''.join(MATERIALS.iloc[i]['controllable_item_ids']):
+            if a == MATERIALS.iloc[i]['kes']:
                 cards_attentions.append({
-                    'title': MATERIALS.iloc[i]['topic_name'],
-                    'type': 'Шаблон лекции',
-                    'level': 'Базовый' if MATERIALS.iloc[i]['studying_level_id']==1 else 'Углубленный',
-                    'description': MATERIALS.iloc[i]['description'],
-                    'author': MATERIALS.iloc[i]['author_name']
+                    'title': MATERIALS.iloc[i]['name'],
+                    'type': 'Книга',
+                    'id': str(int(MATERIALS.iloc[i]['book_id'])),
+                    # 'description': MATERIALS.iloc[i]['description'],
+                    'author': MATERIALS.iloc[i]['authors'],
+                    'img-src': HOST + MATERIALS.iloc[i]['cover']
                 })
+    print(cards_attentions)
     return jsonify({
         'cards_attentions': cards_attentions
     })
