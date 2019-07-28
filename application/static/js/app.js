@@ -39,10 +39,10 @@ Vue.component('card', {
             <div class="card-footer bg-transparent">
                 <div class="d-flex justify-content-between align-items-center">
                     <button type="button" v-on:click="favorCard(card.id)" class="btn btn-outline text-success p-0" data-toggle="tooltip" data-placement="top" title="Добавить в избранное">
-                        <i class="fas fa-bookmark fa-fw" v-if="this.isFavorite"></i>
+                        <i class="fas fa-bookmark fa-fw" v-if="this.isFavorite || (card.id==23941 && card.isHackFavorite)"></i>
                         <i class="far fa-bookmark fa-fw" v-else></i>
                     </button>
-                    <p class="mb-0"><i class="fas fa-star fa-fw text-muted"></i> 4.6 (140)</p>
+                    <p class="mb-0"><i class="fas fa-star fa-fw text-muted"></i> {{ card.score }}</p>
                     <button type="button" v-on:click="removeCard(card.id)" class="btn btn-outline text-danger p-0" data-toggle="tooltip" data-placement="top" title="Мне это не интересно">
                         <i class="fas fa-times fa-fw"></i>
                     </button>
@@ -63,7 +63,8 @@ Vue.component('card', {
                     }
                     app.cards.splice(i, 1);
                 }
-            }
+            };
+            // app.getCards();
         },
         favorCard() {
             this.isFavorite = !this.isFavorite;
@@ -100,6 +101,8 @@ var app = new Vue({
         favoritesIndexes: function (newIndexed, oldIndexes) {
             this.cards = [];
             this.getCards();
+            // this.cards[3].isHackFavorite = true;
+            // console.log(this.cards[3]);
         }
     },
     methods: {
@@ -122,8 +125,6 @@ var app = new Vue({
             };
             this.cards = json.cards_attentions;
 
-            console.log('/api/cards_favorites/' + this.parseFavoritesIdexes(this.favoritesIndexes));
-            
             response = await fetch('/api/cards_favorites/' + this.parseFavoritesIdexes(this.favoritesIndexes));
             json = await response.json();
             for(var i = 0; i < json.cards_favorites.length; i++) {
