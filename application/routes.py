@@ -108,7 +108,7 @@ def cards_attentions():
                     'author': MATERIALS.iloc[i]['authors'],
                     'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
                     'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-                    'kes': MATERIALS.iloc[i]['kes'],
+                    'kes': MATERIALS.iloc[i]['kes'].resplace('.', 'd'),
                 })
     print(cards_attentions)
     return jsonify({
