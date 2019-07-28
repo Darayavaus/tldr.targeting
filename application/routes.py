@@ -42,7 +42,7 @@ def attentions():
         petya = json.load(f)
     attentions = []
     for a in petya['attentions']:
-        key = a.split('.')[0]
+        key = a.split('d')[0]
         attentions.append(MAPPING[key])
     attentions = list(set(attentions))
     return jsonify({
@@ -56,9 +56,9 @@ def favorites():
     favorites = []
     fav_indexes = []
     for f in petya['favorites']:
-        key = f.split('.')
-        fav_indexes.append(key)
-        favorites.append(MAPPING[key[0]])
+        key = f.split('d')[0]
+        fav_indexes.append(f)
+        favorites.append(MAPPING[key])
     favorites = list(set(favorites))
     return jsonify({
         'favorites': {'names' : favorites, "indexes": fav_indexes}
@@ -99,7 +99,7 @@ def cards_attentions():
     cards_attentions = []
     for a in petya['attentions']:
         for i in range(len(MATERIALS)):
-            if a == MATERIALS.iloc[i]['kes']:
+            if a.replace('d', '.') == MATERIALS.iloc[i]['kes']:
                 cards_attentions.append({
                     'title': MATERIALS.iloc[i]['name'],
                     'type': 'Книга',
