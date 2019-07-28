@@ -20,9 +20,10 @@ Vue.component('card', {
     props: ['card'],
     template: `
     <div class="col-md-4">
+        <h5 v-if="card.isAttention"><span class="badge badge-warning">Обрати внимание</span></h5>
         <div class="card mb-4 shadow">
             <div class="card-header bg-transparent p-0">
-                <!-- <img v-bind:src="imgPath" class="card-img-top" height="140" alt="Квантовая теория поля" style="object-fit: cover;"> -->
+                <img v-bind:src="card.imgSrc" class="card-img-top" height="140" alt="Квантовая теория поля" style="object-fit: cover;">
             </div>
             <div class="card-body">
                 <h5 class="card-title">{{ card.title }}</h5>
@@ -36,13 +37,36 @@ Vue.component('card', {
             </div>
             <div class="card-footer bg-transparent">
                 <div class="d-flex justify-content-between align-items-center">
-                    <p class="mb-0"><a href="#" class="text-warning" data-toggle="tooltip" data-placement="top" title="Добавить в избранное"><i class="fas fa-star fa-fw"></i></a></p>
-                    <p class="mb-0"><a href="#" class="text-danger" data-toggle="tooltip" data-placement="top" title="Мне это не интересно"><i class="fas fa-times fa-fw"></i></a></p>
+                    <button type="button" v-on:click="favorCard(card.id)" class="btn btn-outline text-success p-0" data-toggle="tooltip" data-placement="top" title="Добавить в избранное">
+                        <i class="fas fa-bookmark fa-fw" v-if="this.isFavorite"></i>
+                        <i class="far fa-bookmark fa-fw" v-else></i>
+                    </button>
+                    <p class="mb-0"><i class="fas fa-star fa-fw text-muted"></i> 4.6 (140)</p>
+                    <button type="button" v-on:click="removeCard(card.id)" class="btn btn-outline text-danger p-0" data-toggle="tooltip" data-placement="top" title="Мне это не интересно">
+                        <i class="fas fa-times fa-fw"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    `
+    `,
+    methods: {
+        removeCard(cardId) {
+            for(var i = 0; i < app.cards.length; i++) {
+                if (app.cards[i].id == cardId) {
+                    app.cards.splice(i, 1);
+                }
+            }
+        },
+        favorCard() {
+            this.isFavorite = !this.isFavorite;
+        }
+    },
+    data() {
+        return {
+            isFavorite: false,
+        };
+    }
 });
 
 var app = new Vue({
@@ -50,35 +74,38 @@ var app = new Vue({
     data: {
         favorites: [],
         attentions: [],
-        cards_favorites: [],
-        cards_attentions: []
+        cards: []
     },
     methods: {
         async getFavorites() {
             let response = await fetch('/api/favorites/');
             let json = await response.json();
-            this.favorites = json.favorites[0];
+            this.favorites = json.favorites;
         },
         async getAttentions() {
             let response = await fetch('/api/attentions/');
             let json = await response.json();
-            this.attentions = json.attentions[0];
+            this.attentions = json.attentions;
         },
-        async getCardsFavorites() {
+        async getCards() {
             let response = await fetch('/api/cards_favorites/');
             let json = await response.json();
-            this.cards_favorites = json.cards_favorites;
-        },
-        async getCardsAttentions() {
-            let response = await fetch('/api/cards_attentions/');
-            let json = await response.json();
-            this.cards_attentions = json.cards_attentions;
+            for(var i = 0; i < json.cards_favorites.length; i++) {
+                json.cards_favorites[i].isAttention = false;
+            };
+            this.cards = json.cards_favorites;
+
+            response = await fetch('/api/cards_attentions/');
+            json = await response.json();
+            for(var i = 0; i < json.cards_attentions.length; i++) {
+                json.cards_attentions[i].isAttention = true;
+            };
+            this.cards = this.cards.concat(json.cards_attentions);
         }
     },
     created: function() {
         this.getFavorites();
         this.getAttentions();
-        this.getCardsFavorites();
-        this.getCardsAttentions();
+        this.getCards();
     }
 });
