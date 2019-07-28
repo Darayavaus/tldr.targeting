@@ -56,38 +56,38 @@ def favorites():
     favorites = []
     fav_indexes = []
     for f in petya['favorites']:
-        key = f.split('.')[0]
+        key = f.split('.')
         fav_indexes.append(key)
-        favorites.append(MAPPING[key])
+        favorites.append(MAPPING[key[0]])
     favorites = list(set(favorites))
     return jsonify({
         'favorites': {'names' : favorites, "indexes": fav_indexes}
     })
 
-@app.route('/api/cards_favorites/')
-def cards_favorite():
-    if request.method == 'POST':
-        print(request)
-    with open('db/petya.json', 'r') as f:
-        petya = json.load(f)
+@app.route('/api/cards_favorites/<fav>')
+def cards_favorite(fav='41d4d104'):
+    fav_indexes = [f.split('d') for f in fav.split('c')]
+    print(fav_indexes)
     cards_favorites = []
     fav_vector = np.array([0]*71, dtype=int)
-    for f in petya['favorites']:
-        fav_vector = np.logical_or(fav_vector, get_vector(f.split('.'))).astype(int)
+    for f in fav_indexes:
+        fav_vector = np.logical_or(fav_vector, get_vector(f)).astype(int)
         print(fav_vector)
-    recomends = kdt.query(fav_vector, 3, return_distance=False)
+    dists, recomends = kdt.query(fav_vector, 3)
     print(MATERIALS.iloc[recomends[0]])
-    for i in recomends[0]:
-        cards_favorites.append({
-            'title': MATERIALS.iloc[i]['name'],
-            'type': 'Книга',
-            'id': str(int(MATERIALS.iloc[i]['book_id'])),
-            # 'description': MATERIALS.iloc[i]['description'],
-            'author': MATERIALS.iloc[i]['authors'],
-            'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
-            'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-            'kes': MATERIALS.iloc[i]['kes'],
-        })
+    for d, i in zip(dists[0], recomends[0]):
+        print(d, i)
+        if d < 2:
+            cards_favorites.append({
+                'title': MATERIALS.iloc[i]['name'],
+                'type': 'Книга',
+                'id': str(int(MATERIALS.iloc[i]['book_id'])),
+                # 'description': MATERIALS.iloc[i]['description'],
+                'author': MATERIALS.iloc[i]['authors'],
+                'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
+                'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
+                'kes': MATERIALS.iloc[i]['kes'],
+            })
     return jsonify({
         'cards_favorites': cards_favorites
     })
