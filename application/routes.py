@@ -54,16 +54,20 @@ def favorites():
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     favorites = []
+    fav_indexes = []
     for f in petya['favorites']:
         key = f.split('.')[0]
+        fav_indexes.append(key)
         favorites.append(MAPPING[key])
     favorites = list(set(favorites))
     return jsonify({
-        'favorites': favorites
+        'favorites': {'names' : favorites, "indexes": fav_indexes}
     })
 
 @app.route('/api/cards_favorites/')
 def cards_favorite():
+    if request.method == 'POST':
+        print(request)
     with open('db/petya.json', 'r') as f:
         petya = json.load(f)
     cards_favorites = []
@@ -74,7 +78,6 @@ def cards_favorite():
     recomends = kdt.query(fav_vector, 3, return_distance=False)
     print(MATERIALS.iloc[recomends[0]])
     for i in recomends[0]:
-        # MATERIALS.iloc[i]
         cards_favorites.append({
             'title': MATERIALS.iloc[i]['name'],
             'type': 'Книга',
@@ -83,7 +86,7 @@ def cards_favorite():
             'author': MATERIALS.iloc[i]['authors'],
             'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
             'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-            'kes': MATERIALS.iloc[i]['kes']
+            'kes': MATERIALS.iloc[i]['kes'],
         })
     return jsonify({
         'cards_favorites': cards_favorites
@@ -105,7 +108,7 @@ def cards_attentions():
                     'author': MATERIALS.iloc[i]['authors'],
                     'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
                     'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-                    'kes': MATERIALS.iloc[i]['kes']
+                    'kes': MATERIALS.iloc[i]['kes'],
                 })
     print(cards_attentions)
     return jsonify({
