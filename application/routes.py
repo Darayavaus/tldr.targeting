@@ -4,6 +4,8 @@ from . import app
 import json
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.neighbors import KDTree
+import numpy as np
 
 MAPPING = {}
 with open('db/mapping.json', 'r') as f:
@@ -15,8 +17,13 @@ df_kes = MATERIALS[['kes1', 'kes2', 'kes3']]
 enc = OneHotEncoder(sparse=False)
 enc.fit(df_kes)
 df_train = pd.DataFrame(enc.transform(df_kes).astype(int))
+df_train[['authors', 'book_id', 'cover', 'subject', 'name']] = MATERIALS[['authors', 'book_id', 'cover', 'subject', 'name']]
+neighbors = df_train[df_train.columns[0:71]]
+kdt = KDTree(neighbors, leaf_size=30, metric='euclidean')
 
-df_train[['authors', 'bood_id', 'cover', 'subject', 'name']] = MATERIALS[['authors', 'book_id', 'cover', 'subject', 'name']]
+def get_vector(xs):
+    arr = [int(x) for x in xs]
+    return enc.transform(np.array(arr).reshape(1, len(arr)))
 
 # print(MATERIALS.iloc[1])
 
@@ -57,8 +64,15 @@ def favorites():
 
 @app.route('/api/cards_favorites/')
 def cards_favorite():
+    with open('db/petya.json', 'r') as f:
+        petya = json.load(f)
+    cards_favorites = []
+    fav_vector = np.array([0]*71, dtype=int)
+    for f in petya['favorites']:
+        fav_vector = np.logical_or(fav_vector, get_vector(f.split('.'))).astype(int)
+        print(fav_vector)
     return jsonify({
-        'cards_favorites': []
+        'cards_favorites': cards_favorites
     })
 
 @app.route('/api/cards_attentions/')
@@ -75,7 +89,8 @@ def cards_attentions():
                     'id': str(int(MATERIALS.iloc[i]['book_id'])),
                     # 'description': MATERIALS.iloc[i]['description'],
                     'author': MATERIALS.iloc[i]['authors'],
-                    'imgSrc': HOST + MATERIALS.iloc[i]['cover']
+                    'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
+                    'kes': MATERIALS.iloc[i]['kes']
                 })
     print(cards_attentions)
     return jsonify({
