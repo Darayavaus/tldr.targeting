@@ -20,7 +20,8 @@ Vue.component('card', {
     props: ['card'],
     template: `
     <div class="col-md-4">
-        <h5 v-if="card.isAttention"><span class="badge badge-warning">Обрати внимание</span></h5>
+        <h5 v-if="card.isAttention"><span class="badge badge-warning">Для успеваемости</span></h5>
+        <h5 v-else><span class="badge badge-info">По интересам</span></h5>
         <div class="card mb-4 shadow">
             <div class="card-header bg-transparent p-0">
                 <img v-bind:src="card.imgSrc" class="card-img-top" height="140" alt="Квантовая теория поля" style="object-fit: cover;">
@@ -68,6 +69,7 @@ Vue.component('card', {
             this.isFavorite = !this.isFavorite;
             if (this.isFavorite) {
                 app.favorites.push(this.card.theme);
+                app.favoritesIndexes.push(this.card.kes);
             } 
             if (!this.isFavorite) {
                 for (var i = 0; i < app.favorites.length; i++) {
@@ -90,17 +92,22 @@ var app = new Vue({
     el: '#app',
     data: {
         favorites: [],
+        favoritesIndexes: [],
         attentions: [],
         cards: []
+    },
+    watch: {
+        favoritesIndexes: function (newIndexed, oldIndexes) {
+            this.cards = [];
+            this.getCards();
+        }
     },
     methods: {
         async getFavorites() {
             let response = await fetch('/api/favorites/');
             let json = await response.json();
-            this.favorites = json.favorites;
-            
-            // this.favorites = json.favorites.names;
-            // this.fav_index
+            this.favorites = json.favorites.names;
+            this.favoritesIndexes = json.favorites.indexes;
         },
         async getAttentions() {
             let response = await fetch('/api/attentions/');
@@ -115,17 +122,21 @@ var app = new Vue({
             };
             this.cards = json.cards_attentions;
 
-            response = await fetch('/api/cards_favorites/');
+            console.log('/api/cards_favorites/' + this.parseFavoritesIdexes(this.favoritesIndexes));
+            
+            response = await fetch('/api/cards_favorites/' + this.parseFavoritesIdexes(this.favoritesIndexes));
             json = await response.json();
             for(var i = 0; i < json.cards_favorites.length; i++) {
                 json.cards_favorites[i].isAttention = false;
             };
             this.cards = this.cards.concat(json.cards_favorites);
+        },
+        parseFavoritesIdexes(indexes) {
+            return indexes.join('c');
         }
     },
     created: function() {
         this.getFavorites();
         this.getAttentions();
-        this.getCards();
     }
 });
