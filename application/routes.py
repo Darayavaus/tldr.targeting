@@ -65,7 +65,7 @@ def favorites():
     })
 
 @app.route('/api/cards_favorites/<fav>')
-def cards_favorite(fav='41d4d104'):
+def cards_favorite(fav):
     fav_indexes = [f.split('d') for f in fav.split('c')]
     print(fav_indexes)
     cards_favorites = []
@@ -86,7 +86,7 @@ def cards_favorite(fav='41d4d104'):
                 'author': MATERIALS.iloc[i]['authors'],
                 'imgSrc': HOST + MATERIALS.iloc[i]['cover'],
                 'theme': MAPPING[MATERIALS.iloc[i]['kes'].split('.')[0]],
-                'kes': MATERIALS.iloc[i]['kes'],
+                'kes': MATERIALS.iloc[i]['kes'].replace('.', 'd'),
             })
     return jsonify({
         'cards_favorites': cards_favorites
