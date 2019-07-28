@@ -36,7 +36,7 @@
                         <h6>Интересующие темы:</h6>
                         <ul class="list-unstyled list-inline mb-3">
                             <favorite
-                                v-for="favorite in favorites"
+                                v-for="favorite in [...new Set(favorites)]"
                                 v-bind:value="favorite"
                                 v-bind:key="favorite.id"
                             ></favorite>
@@ -44,7 +44,7 @@
                         <h6>Темы, на которые стоит обратить внимание:</h6>
                         <ul class="list-unstyled list-inline mb-3">
                             <attention
-                                v-for="attention in attentions"
+                                v-for="attention in [...new Set(attentions)]"
                                 v-bind:value="attention"
                                 v-bind:key="attention.id"
                             ></attention>

@@ -52,14 +52,31 @@ Vue.component('card', {
     `,
     methods: {
         removeCard(cardId) {
-            for(var i = 0; i < app.cards.length; i++) {
+            for (var i = 0; i < app.cards.length; i++) {
                 if (app.cards[i].id == cardId) {
+                    for (var j = 0; j < app.favorites.length; j++) {
+                        if (app.favorites[j] == app.cards[i].theme) {
+                            app.favorites.splice(j, 1);
+                            break;
+                        }
+                    }
                     app.cards.splice(i, 1);
                 }
             }
         },
         favorCard() {
             this.isFavorite = !this.isFavorite;
+            if (this.isFavorite) {
+                app.favorites.push(this.card.theme);
+            } 
+            if (!this.isFavorite) {
+                for (var i = 0; i < app.favorites.length; i++) {
+                    if (app.favorites[i] == this.card.theme) {
+                        app.favorites.splice(i, 1);
+                        break;
+                    }
+                }
+            }
         }
     },
     data() {
@@ -81,6 +98,9 @@ var app = new Vue({
             let response = await fetch('/api/favorites/');
             let json = await response.json();
             this.favorites = json.favorites;
+            
+            // this.favorites = json.favorites.names;
+            // this.fav_index
         },
         async getAttentions() {
             let response = await fetch('/api/attentions/');
@@ -88,19 +108,19 @@ var app = new Vue({
             this.attentions = json.attentions;
         },
         async getCards() {
-            let response = await fetch('/api/cards_favorites/');
+            let response = await fetch('/api/cards_attentions/');
             let json = await response.json();
-            for(var i = 0; i < json.cards_favorites.length; i++) {
-                json.cards_favorites[i].isAttention = false;
-            };
-            this.cards = json.cards_favorites;
-
-            response = await fetch('/api/cards_attentions/');
-            json = await response.json();
             for(var i = 0; i < json.cards_attentions.length; i++) {
                 json.cards_attentions[i].isAttention = true;
             };
-            this.cards = this.cards.concat(json.cards_attentions);
+            this.cards = json.cards_attentions;
+
+            response = await fetch('/api/cards_favorites/');
+            json = await response.json();
+            for(var i = 0; i < json.cards_favorites.length; i++) {
+                json.cards_favorites[i].isAttention = false;
+            };
+            this.cards = this.cards.concat(json.cards_favorites);
         }
     },
     created: function() {
