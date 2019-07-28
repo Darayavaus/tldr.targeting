@@ -3,12 +3,21 @@ from . import app
 
 import json
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 
 MAPPING = {}
 with open('db/mapping.json', 'r') as f:
     MAPPING = json.load(f)
 
 MATERIALS = pd.read_csv('db/materials.csv', sep=',')
+
+df_kes = MATERIALS[['kes1', 'kes2', 'kes3']]
+enc = OneHotEncoder(sparse=False)
+enc.fit(df_kes)
+df_train = pd.DataFrame(enc.transform(df_kes).astype(int))
+
+df_train[['authors', 'bood_id', 'cover', 'subject', 'name']] = MATERIALS[['authors', 'book_id', 'cover', 'subject', 'name']]
+
 # print(MATERIALS.iloc[1])
 
 HOST = 'https://uchebnik.mos.ru/cms/api'
@@ -66,7 +75,7 @@ def cards_attentions():
                     'id': str(int(MATERIALS.iloc[i]['book_id'])),
                     # 'description': MATERIALS.iloc[i]['description'],
                     'author': MATERIALS.iloc[i]['authors'],
-                    'img-src': HOST + MATERIALS.iloc[i]['cover']
+                    'imgSrc': HOST + MATERIALS.iloc[i]['cover']
                 })
     print(cards_attentions)
     return jsonify({
